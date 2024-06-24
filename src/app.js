@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import userRouter from "./routes/user.routes.js";
+import productsRouter from "./routes/products.routes.js";
 
 const app = express();
 
@@ -7,7 +9,7 @@ const app = express();
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
-    credential: true,
+    credentials: true,
   }),
 );
 app.use(express.json());
@@ -18,5 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("welcome to solemates");
 });
+
+app.use("/api/users", userRouter);
+app.use("/api/products", productsRouter);
 
 export default app;
