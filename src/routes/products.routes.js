@@ -16,7 +16,7 @@ productsRouter.post("/create", async (req, res) => {
 });
 
 // GET route to fetch all products
-productsRouter.get("/", async (req, res) => {
+productsRouter.get("/shoes", async (req, res) => {
   try {
     const products = await ProductModel.find();
     res.status(200).json(products);
@@ -26,11 +26,10 @@ productsRouter.get("/", async (req, res) => {
 });
 
 // GET route to fetch a single product by id
-productsRouter.get("/:product_id", async (req, res) => {
-  const { id } = req.params;
-
+productsRouter.get("/shoe/:id", async (req, res) => {
   try {
-    const product = await ProductModel.findOne({ _id });
+    const productId = req.params.id;
+    const product = await ProductModel.findById(productId);
     if (product) {
       res.status(200).json(product);
     } else {
