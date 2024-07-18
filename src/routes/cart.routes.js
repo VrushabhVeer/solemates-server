@@ -1,8 +1,9 @@
 import express from "express";
 import CartModel from "../models/cart.model.js";
+import auth from "../middlewares/auth.js";
 const cartRouter = express.Router();
 
-cartRouter.post("/create", async (req, res) => {
+cartRouter.post("/create", auth, async (req, res) => {
   try {
     const cartItem = new CartModel(req.body);
     const newCartItem = await cartItem.save();
@@ -17,7 +18,10 @@ cartRouter.post("/create", async (req, res) => {
 
 cartRouter.get("/:userId", async (req, res) => {
   try {
-    const cartItem = CartModel.find({ userId: req.params.userId });
+    const cartItem = await CartModel.find({ userId: req.params.userId });
+    if (!cartItem.length) {
+      return res.status(404).json({ message: "Cart items not found" });
+    }
     res.status(200).json(cartItem);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -25,7 +29,7 @@ cartRouter.get("/:userId", async (req, res) => {
 });
 export default cartRouter;
 
-cartRouter.delete("/delete/:itemId", async (req, res) => {
+cartRouter.delete("/delete/:itemId", auth, async (req, res) => {
   try {
     const { cartId } = req.params;
     const deleteCartItem = await CartModel.findOneAndDelete({

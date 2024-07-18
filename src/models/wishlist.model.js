@@ -17,7 +17,7 @@ const wishlistSchema = new mongoose.Schema({
   offerPrice: { type: Number, required: true },
   description: { type: String, required: true },
   rating: { type: String },
-  size: { type: Number, required: true },
+  userId: { type: String, required: true },
 });
 
 const WishlistModel = mongoose.model("wishlist", wishlistSchema);

@@ -4,6 +4,11 @@ const wishlistRouter = express.Router();
 
 wishlistRouter.post("/create", async (req, res) => {
   try {
+    const { userId, itemId } = req.body;
+    const existingItem = await WishlistModel.findOne({ userId, itemId });
+    if (existingItem) {
+      return res.status(400).json({ message: "Item already in Wishlist" });
+    }
     const wishlistItem = new WishlistModel(req.body);
     const newWishlistItem = await wishlistItem.save();
     res.status(201).json({
@@ -11,13 +16,15 @@ wishlistRouter.post("/create", async (req, res) => {
       data: newWishlistItem,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
 wishlistRouter.get("/:userId", async (req, res) => {
   try {
-    const wishlistItem = WishlistModel.find({ userId: req.params.userId });
+    const wishlistItem = await WishlistModel.find({
+      userId: req.params.userId,
+    });
     res.status(200).json(wishlistItem);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,7 +38,6 @@ wishlistRouter.delete("/delete/:itemId", async (req, res) => {
       _id: itemId,
       userId: req.body.userId,
     });
-
     if (!deleteWishlistItem) {
       return res.status(404).json({ message: "Wishlist item not found" });
     }
