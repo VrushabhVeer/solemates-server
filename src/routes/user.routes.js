@@ -70,7 +70,9 @@ userRouter.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       userName: user.name,
+      userEmail: user.email,
       userId: user._id,
+      createdAt: user.createdAt,
     });
   } catch (error) {
     res

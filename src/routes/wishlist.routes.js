@@ -11,12 +11,19 @@ wishlistRouter.post("/create", async (req, res) => {
     }
     const wishlistItem = new WishlistModel(req.body);
     const newWishlistItem = await wishlistItem.save();
+
     res.status(201).json({
       message: "Added to Wishlist",
       data: newWishlistItem,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error.code === 11000) {
+      console.error(`Duplicate key error: ${error.message}`);
+      return res.status(400).json({ message: "Item already in Wishlist" });
+    } else {
+      console.error(`Error adding item to wishlist: ${error.message}`);
+      return res.status(500).json({ message: error.message });
+    }
   }
 });
 
@@ -36,7 +43,6 @@ wishlistRouter.delete("/delete/:itemId", async (req, res) => {
     const { itemId } = req.params;
     const deleteWishlistItem = await WishlistModel.findOneAndDelete({
       _id: itemId,
-      userId: req.body.userId,
     });
     if (!deleteWishlistItem) {
       return res.status(404).json({ message: "Wishlist item not found" });
