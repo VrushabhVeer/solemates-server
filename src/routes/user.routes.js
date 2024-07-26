@@ -63,9 +63,7 @@ userRouter.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ userId: user._id, userName: user.name }, key, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ userId: user._id, userName: user.name }, key);
     res.status(200).json({
       message: "Login successful",
       token,
